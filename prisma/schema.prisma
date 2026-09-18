@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StreamHealth {
+  UNKNOWN
+  CHECKING
+  ACTIVE
+  INACTIVE
+}
+
+model Playlist {
+  id        String    @id @default(cuid())
+  name      String
+  m3uUrl    String
+  logoUrl   String?
+  channels  Channel[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([name])
+}
+
+model Channel {
+  id                String       @id @default(cuid())
+  playlistId        String
+  playlist          Playlist     @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  sourceKey         String
+  name              String
+  streamUrl         String
+  streamUrlOverride String?
+  sourceType        String       @default("hls")
+  logoUrl           String?
+  groupTitle        String?
+  tvgId             String?
+  tvgName           String?
+  healthStatus      StreamHealth  @default(UNKNOWN)
+  lastCheckedAt     DateTime?
+  lastOnlineAt      DateTime?
+  healthError       String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@unique([playlistId, sourceKey])
+  @@index([playlistId])
+  @@index([groupTitle])
+  @@index([healthStatus])
+  @@index([lastCheckedAt])
+  @@index([healthStatus, groupTitle])
+  @@index([playlistId, healthStatus])
+}
+
+model SiteSettings {
+  id                  Int      @id @default(1)
+  websiteName         String   @default("LIVE TV")
+  websiteUrl          String?
+  websiteLogoUrl      String?
+  showPlayerBrand     Boolean  @default(true)
+  playerBrandPosition String   @default("bottom")
+  brandTextSize       Int      @default(9)
+  updatedAt           DateTime @updatedAt
+}
+
+model AccessLink {
+  id         String                 @id @default(cuid())
+  token      String                 @unique @default(cuid())
+  label      String?
+  expiresAt  DateTime
+  revoked    Boolean                @default(false)
+  maxDevices Int?
+  createdAt  DateTime               @default(now())
+  lastUsedAt DateTime?
+  useCount   Int                    @default(0)
+  sessions   AccessDeviceSession[]
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model AccessDeviceSession {
+  id           String     @id @default(cuid())
+  accessLinkId String
+  accessLink   AccessLink @relation(fields: [accessLinkId], references: [id], onDelete: Cascade)
+  deviceId     String
+  lastSeenAt   DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+
+  @@unique([accessLinkId, deviceId])
+  @@index([accessLinkId])
+  @@index([lastSeenAt])
+}

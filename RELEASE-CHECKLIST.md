@@ -1,0 +1,25 @@
+# Final Release Checklist
+
+- [x] Phase 1 foundation/database
+- [x] Phase 2 health monitoring
+- [x] Phase 3 secure admin authentication
+- [x] Phase 4 premium public website
+- [x] Phase 5 advanced HLS player
+- [x] Phase 6 branding settings
+- [x] Phase 7 security/performance hardening
+- [x] Phase 8 PWA
+- [x] Phase 9 Smart TV/D-pad navigation
+- [x] Phase 10 release cleanup and integration fixes
+- [x] Admin/public Prisma client naming consistency
+- [x] Public branding settings correctly loaded by the website
+- [x] Player click interactions reset the 7-second controls timer
+- [x] Player LIVE status badge removed from inside the player
+- [x] Player starts muted for browser autoplay compatibility
+- [x] Branding URL fields validated as HTTP(S) URLs by URL schema validation
+- [x] Stale phase comment removed
+- [x] PWA manifest/icons/service worker included
+- [ ] Deployment environment: run npm install
+- [ ] Deployment environment: run Prisma generate/db push
+- [ ] Deployment environment: run typecheck/build
+- [ ] Configure production secrets and HTTPS
+- [ ] Test representative authorized M3U/HLS streams on target browsers/TVs
