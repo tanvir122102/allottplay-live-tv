@@ -48,6 +48,13 @@ export async function POST(req: Request) {
     const emailOk = !!email && submittedEmail.toLowerCase() === email.toLowerCase();
     const passOk = verifyPassword(body.password);
 
+    console.log('LOGIN DEBUG:', {
+  emailConfigured: !!email,
+  submittedEmail: submittedEmail.toLowerCase(),
+  emailMatches: emailOk,
+  passwordMatches: passOk,
+});
+
     if (!emailOk || !passOk) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
