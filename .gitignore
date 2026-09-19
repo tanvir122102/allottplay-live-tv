@@ -20,3 +20,5 @@ pnpm-debug.log*
 Thumbs.db
 
 tsconfig.tsbuildinfo
+.vercel
+.env*
