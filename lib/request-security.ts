@@ -7,39 +7,21 @@ const ALLOWED_ORIGINS = new Set([
 export function sameOrigin(req: Request): boolean {
   const origin = req.headers.get('origin');
 
-  // Requests without an Origin header are allowed by this check.
-  // Authentication and other security checks must still run.
-  if (!origin) {
-    return true;
-  }
+  // Keep requests without Origin compatible with non-browser clients.
+  if (!origin) return true;
 
-  let requestOrigin: string;
+  const allowed = ALLOWED_ORIGINS.has(origin);
 
-  try {
-    requestOrigin = new URL(req.url).origin;
-  } catch {
-    console.error('[ORIGIN DEBUG] Invalid request URL');
-    return false;
-  }
-
-  console.log('[ORIGIN DEBUG]', {
+  console.log('[ORIGIN CHECK]', {
     origin,
-    requestOrigin,
-    originAllowed: ALLOWED_ORIGINS.has(origin),
-    matchesRequestOrigin: origin === requestOrigin,
+    allowed,
   });
 
-  // Require both an approved public origin and a matching request origin.
-  return (
-    ALLOWED_ORIGINS.has(origin) &&
-    origin === requestOrigin
-  );
+  return allowed;
 }
 
 export function rejectCrossOrigin(req: Request) {
-  if (sameOrigin(req)) {
-    return null;
-  }
+  if (sameOrigin(req)) return null;
 
   return NextResponse.json(
     { error: 'Cross-origin request blocked' },
